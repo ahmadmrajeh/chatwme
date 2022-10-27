@@ -1,10 +1,10 @@
-package com.example.chatwme.adapter
+package com.example.chatwme.ui.adapter
 
 import android.util.Log
 import android.widget.ImageView
  import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.chatwme.MainActivity
+import com.example.chatwme.ui.MainActivity
 import com.example.chatwme.R
 import com.example.chatwme.databinding.ImageMessageBinding
 import com.example.chatwme.model.MessageBody

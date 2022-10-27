@@ -1,11 +1,11 @@
-package com.example.chatwme.adapter
+package com.example.chatwme.ui.adapter
 
 import android.graphics.Color
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatwme.MainActivity
+import com.example.chatwme.ui.MainActivity
 import com.example.chatwme.R
-import com.example.chatwme.adapter.ImageMessageViewHolder.Companion.loadImageIntoView
+import com.example.chatwme.ui.adapter.ImageMessageViewHolder.Companion.loadImageIntoView
 import com.example.chatwme.databinding.MessageBinding
 import com.example.chatwme.model.MessageBody
 

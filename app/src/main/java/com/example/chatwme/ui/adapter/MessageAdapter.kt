@@ -1,4 +1,4 @@
-package com.example.chatwme.adapter
+package com.example.chatwme.ui.adapter
  import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -40,20 +40,17 @@ class MessageAdapter(
             holder.bind(model)
         } else if (holder is ImageMessageViewHolder) {
             holder.bind(model)
-        }
-
+         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return if (options.snapshots[position].text != null) VIEW_TYPE_TEXT else VIEW_TYPE_IMAGE
     }
 
-
-
-
     companion object {
         const val TAG = "MessageAdapter"
         const val VIEW_TYPE_TEXT = 1
         const val VIEW_TYPE_IMAGE = 2
     }
+
 }

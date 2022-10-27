@@ -1,4 +1,4 @@
-package com.example.chatwme
+package com.example.chatwme.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -9,7 +9,8 @@ import android.view.MenuItem
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.chatwme.adapter.MessageAdapter
+import com.example.chatwme.R
+import com.example.chatwme.ui.adapter.MessageAdapter
 import com.example.chatwme.databinding.ActivityMainBinding
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         binding.addMessageImageView.setOnClickListener {
             openDocument.launch(arrayOf("image/*"))
         }
-     }
+    }
 
 
     private fun setUpAdapters(options: FirebaseRecyclerOptions<MessageBody>) {
@@ -120,6 +121,10 @@ class MainActivity : AppCompatActivity() {
                 signOut()
                 true
             }
+            R.id.posts_Activity -> {
+startActivity(Intent(this, PostActivity::class.java))
+                return true
+            }
 
             else -> super.onOptionsItemSelected(item)
         }
@@ -143,16 +148,16 @@ class MainActivity : AppCompatActivity() {
                         return@CompletionListener
                     }
 
-                     val key = databaseReference.key
+                    val key = databaseReference.key
                     val storageReference = Firebase.storage
                         .getReference(user!!.uid)
                         .child(key!!)
                         .child(uri.lastPathSegment!!)
                     putImageInStorage(storageReference, uri, key)
-                })
+            })
     }
 
-    
+
     private fun textMessage(text : String) {
         val bodyMessage = MessageBody(
             text,
@@ -176,7 +181,7 @@ class MainActivity : AppCompatActivity() {
                         val messageBody =
                             MessageBody(null, getUserName(), getPhotoUrl(), uri.toString())
 
-                             db.reference
+                        db.reference
                             .child(MESSAGES_CHILD)
                             .child(key!!)
                             .setValue(messageBody)
