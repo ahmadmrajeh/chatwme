@@ -9,7 +9,7 @@
     android:layout_margin="10dp">
 
     <TextView
-        android:id="@+id/messageTextView"
+        android:id="@+id/messager"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -20,7 +20,7 @@
         tools:text="FirstName LastName" />
 
     <TextView
-        android:id="@+id/messengerTextView"
+        android:id="@+id/messenge"
         android:layout_width="wrap_content"
         android:maxWidth="250dp"
         android:layout_height="wrap_content"
@@ -29,8 +29,8 @@
         tools:text="This is a message"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
-        app:layout_constraintStart_toStartOf="@id/messageTextView"
-        app:layout_constraintTop_toBottomOf="@id/messageTextView"
+        app:layout_constraintStart_toStartOf="@id/messager"
+        app:layout_constraintTop_toBottomOf="@id/messager"
         />
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -40,7 +40,7 @@
         android:layout_marginBottom="15dp"
         android:src="@drawable/ic_account_circle_black_36dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/messageTextView"
+        app:layout_constraintEnd_toStartOf="@id/messager"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

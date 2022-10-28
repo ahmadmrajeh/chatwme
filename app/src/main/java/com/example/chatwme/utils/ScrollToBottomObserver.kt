@@ -10,9 +10,7 @@ class ScrollToBottomObserver(
     private val recycler: RecyclerView,
     private val adapter: MessageAdapter,
     private val manager: LinearLayoutManager
-
-
-) : AdapterDataObserver() {
+  ) : AdapterDataObserver() {
 
     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
         super.onItemRangeInserted(positionStart, itemCount)
