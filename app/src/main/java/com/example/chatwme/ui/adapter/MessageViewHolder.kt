@@ -16,10 +16,10 @@ class MessageViewHolder(private val binding: MessageBinding, private val current
 
 
      fun bind(item: MessageBody) {
-        binding.messageTextView.text = item.text
-        setTextColor(item.name, binding.messageTextView)
+        binding.message .text = item.text
+        setTextColor(item.name, binding.message)
 
-        binding.messengerTextView.text = item.name ?: MainActivity.ANONYMOUS
+        binding.username .text = item.name ?: MainActivity.ANONYMOUS
         if (item.photoUrl != null) {
             loadImageIntoView(binding.messengerImageView, item.photoUrl)
         } else {

@@ -1,9 +1,9 @@
 package com.example.chatwme.ui.adapter
 
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatwme.databinding.PostBinding
 import com.example.chatwme.model.MessageBody
-import com.example.chatwme.model.Sports
 import com.google.firebase.firestore.DocumentSnapshot
 
 class PostsViewHolder(
@@ -13,6 +13,7 @@ class PostsViewHolder(
 
     fun bind(snapshot: DocumentSnapshot, listener: PostAdapter.PostsAdapterListener) {
         val status: MessageBody? = snapshot.toObject(MessageBody::class.java)
+        Log.e("snap", "we are in bind")
         binding.messager.text= status?.name
         binding.messenge.text=status?.text
 

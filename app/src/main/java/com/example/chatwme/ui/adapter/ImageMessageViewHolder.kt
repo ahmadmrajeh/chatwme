@@ -17,7 +17,7 @@ class ImageMessageViewHolder(private val binding: ImageMessageBinding) :
 
         loadImageIntoView(binding.messageImageView, item.imageUrl?:"https://www.google.com/images/spin-32.gif")
 
-        binding.messengerTextView.text = item.name ?: MainActivity.ANONYMOUS
+        binding.username .text = item.name ?: MainActivity.ANONYMOUS
         if (item.photoUrl != null) {
             loadImageIntoView(binding.messengerImageView, item.photoUrl)
         } else {

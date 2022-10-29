@@ -1,4 +1,3 @@
-
 package com.example.chatwme.utils
 
 import androidx.recyclerview.widget.LinearLayoutManager
