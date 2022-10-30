@@ -1,14 +1,15 @@
 package com.example.chatwme.ui
+
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatwme.R
 import com.example.chatwme.databinding.ActivityPostBinding
-import com.example.chatwme.model.MessageBody
+import com.example.chatwme.model.Record
 import com.example.chatwme.ui.adapter.PostAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -22,21 +23,22 @@ import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 
 
 class PostActivity : AppCompatActivity(), PostAdapter.PostsAdapterListener {
+
     private lateinit var auth: FirebaseAuth
     private lateinit var adapter: PostAdapter
     private lateinit var binding: ActivityPostBinding
-     override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding =ActivityPostBinding.inflate(layoutInflater)
-        setContentView( binding.root)
+        binding = ActivityPostBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         auth = Firebase.auth
 
-         setUpScreen()
+        setUpScreen()
 
     }
 
     private fun setUpScreen() {
-        val db =FirebaseFirestore.getInstance().collection("records")
+        val db = FirebaseFirestore.getInstance().collection("records")
         setUpRV(db)
         remoteConfigDefined()
 
@@ -48,19 +50,26 @@ class PostActivity : AppCompatActivity(), PostAdapter.PostsAdapterListener {
     private fun clickListeners(db: CollectionReference) {
         binding.button2.setOnClickListener {
             val status = binding.statusText.text
+
             if (status.isNotBlank() || status.isNotEmpty()) {
+
+
                 addToFireStore(
-                    db, MessageBody(
-                        status.toString(), getUserName(), getPhotoUrl(), null
+                    db, Record(
+                        status.toString(), getUserName(), getPhotoUrl(),
+                        null, System.currentTimeMillis()
                     )
                 )
+                binding.statusText.text = null
+
             }
+
         }
 
         binding.button3.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
         }
-        binding.button4.setOnClickListener{
+        binding.button4.setOnClickListener {
             throw RuntimeException("Test Crash")
         }
 
@@ -77,48 +86,48 @@ class PostActivity : AppCompatActivity(), PostAdapter.PostsAdapterListener {
         remoteConfig.fetchAndActivate()
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                     configPosting(remoteConfig.getBoolean("country"))
+                    configPosting(remoteConfig.getBoolean("country"))
                 }
-
             }
-
     }
 
     private fun configPosting(notAllowed: Boolean) {
         if (notAllowed) {
 
             binding.button2.visibility = View.INVISIBLE
-            binding.statusText.hint = "posting is not allowed for you, please contact app developers"
+            binding.statusText.hint =
+                "posting is not allowed for you, please contact app developers"
         } else {
 
             binding.button2.visibility = View.VISIBLE
-            binding.statusText.hint ="write something"
+            binding.statusText.hint = "write something"
         }
     }
+
     private fun setUpRV(db: Query) {
         val query: Query = db
-        adapter = PostAdapter(query, this)
+        adapter = PostAdapter(query.orderBy("time"), this)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
-
-        adapter.stateRestorationPolicy= RecyclerView.Adapter
-          .StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        adapter.stateRestorationPolicy = RecyclerView.Adapter
+            .StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
+    private fun addToFireStore(db: CollectionReference, data: Record) {
 
-    private fun addToFireStore(db: CollectionReference, data: MessageBody) {
         db.add(data)
             .addOnSuccessListener { documentReference ->
                 Log.e("TAGfire", "DocumentSnapshot written with ID: ${documentReference.id}")
             }
             .addOnFailureListener { e ->
-                Log.e("TAGfire", "Error adding document"+ e.message)
+                Log.e("TAGfire", "Error adding document" + e.message)
             }
+
     }
 
-    override fun onPostSelected(status: MessageBody?) {
+    override fun onPostSelected(status: Record?) {
 
-     }
+    }
 
     override fun onStart() {
         super.onStart()

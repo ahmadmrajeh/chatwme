@@ -5,9 +5,16 @@
         android:id="@+id/sign_out_menu"
         android:title="@string/sign_out"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/sign"
+        android:title="@string/login"
+        app:showAsAction="never"/>
+
     <item
         android:id="@+id/posts_Activity"
-        android:title="Post Activity"
+        android:title="@string/post_activity"
         app:showAsAction="never"/>
+
 
 </menu>

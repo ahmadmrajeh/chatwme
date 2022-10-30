@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView.*
 import com.firebase.ui.database.FirebaseRecyclerOptions
  import com.example.chatwme.databinding.ImageMessageBinding
 import com.example.chatwme.databinding.MessageBinding
-import com.example.chatwme.model.MessageBody
+ import com.example.chatwme.databinding.SenderBinding
+ import com.example.chatwme.model.MessageBody
 
 
 class MessageAdapter(
@@ -21,10 +22,21 @@ class MessageAdapter(
         val inflater = LayoutInflater.from(parent.context)
 
         return if (viewType == VIEW_TYPE_TEXT) {
+
+
             val view = inflater.inflate(R.layout.message, parent, false)
             val binding = MessageBinding.bind(view)
             MessageViewHolder(binding,currentUserName)
-        } else  {
+
+
+        } else if (viewType == VIEW_TYPE_TEXT_SENDER) {
+
+            val view = inflater.inflate(R.layout.sender, parent, false)
+            val binding = SenderBinding.bind(view)
+            SenderViewHolder(binding,currentUserName)
+        }
+
+        else  {
 
             val view = inflater.inflate(R.layout.image_message, parent, false)
             val binding = ImageMessageBinding.bind(view)
@@ -38,18 +50,26 @@ class MessageAdapter(
         Log.d("tess", "getItemViewType: $position , ${options.snapshots.size} ")
         if (holder is MessageViewHolder) {
             holder.bind(model)
-        } else if (holder is ImageMessageViewHolder) {
+        } else if (holder is SenderViewHolder){
+            holder.bind(model)
+        }
+
+        else if (holder is ImageMessageViewHolder) {
             holder.bind(model)
          }
     }
 
+
     override fun getItemViewType(position: Int): Int {
-        return if (options.snapshots[position].text != null) VIEW_TYPE_TEXT else VIEW_TYPE_IMAGE
+        val snapTextExist=options.snapshots[position]
+        return if (snapTextExist.text  != null&& snapTextExist.name != currentUserName) VIEW_TYPE_TEXT
+        else if (snapTextExist.text != null )VIEW_TYPE_TEXT_SENDER
+        else  VIEW_TYPE_IMAGE
     }
 
     companion object {
-        const val TAG = "MessageAdapter"
         const val VIEW_TYPE_TEXT = 1
+        const val VIEW_TYPE_TEXT_SENDER = 3
         const val VIEW_TYPE_IMAGE = 2
     }
 

@@ -7,19 +7,22 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ProgressBar
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatwme.R
-import com.example.chatwme.ui.adapter.MessageAdapter
 import com.example.chatwme.databinding.ActivityMainBinding
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.example.chatwme.model.MessageBody
+import com.example.chatwme.ui.adapter.MessageAdapter
 import com.example.chatwme.utils.ButtonObserver
 import com.example.chatwme.utils.OpenDocumentContract
 import com.example.chatwme.utils.ScrollToBottomObserver
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
@@ -29,7 +32,6 @@ import com.google.firebase.storage.ktx.storage
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var userId: String
     private lateinit var auth: FirebaseAuth
     private lateinit var binding: ActivityMainBinding
     private lateinit var manager: LinearLayoutManager
@@ -41,7 +43,8 @@ class MainActivity : AppCompatActivity() {
                 onImageSelected(it)
             }
         }
-
+    private val signIn: ActivityResultLauncher<Intent> =
+        registerForActivityResult(FirebaseAuthUIActivityResultContract(), this::onSignInResult)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +54,33 @@ class MainActivity : AppCompatActivity() {
 
         auth = Firebase.auth
         if (auth.currentUser == null) {
-            startActivity(Intent(this, SignInActivity::class.java))
-            finish()
-            return }
+
+            forceLogedIn()
+
+            // finish()
+            // return
+        }
 
         setUpScreen()
 
+    }
+
+    private fun forceLogedIn(loggedOut: Boolean = false) {
+        if (Firebase.auth.currentUser == null || loggedOut) {
+
+            val signInIntent = AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setLogo(R.mipmap.ic_launcher)
+                .setAvailableProviders(
+                    listOf(
+                        AuthUI.IdpConfig.EmailBuilder().build(),
+                        AuthUI.IdpConfig.GoogleBuilder().build(),
+                    )
+                )
+                .build()
+
+            signIn.launch(signInIntent)
+        }
     }
 
     private fun setUpScreen() {
@@ -80,6 +104,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+        if (result.resultCode == RESULT_OK) {
+            Log.d(TAG, "Sign in successful!")
+            // goToMainActivity()
+
+        } else {
+
+            val response = result.idpResponse
+            if (response == null) {
+                Log.w(TAG, "Sign in canceled")
+            } else {
+                Log.w(TAG, "Sign in error", response.error)
+            }
+        }
+    }
+
+    private fun goToMainActivity() {
+        startActivity(Intent(this, MainActivity::class.java))
+
+    }
 
     private fun setUpAdapters(options: FirebaseRecyclerOptions<MessageBody>) {
         adapter = MessageAdapter(options, getUserName())
@@ -103,9 +147,13 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
+
     public override fun onResume() {
         super.onResume()
+
+
         adapter.startListening()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -121,10 +169,16 @@ class MainActivity : AppCompatActivity() {
                 signOut()
                 true
             }
+            R.id.sign -> {
+                forceLogedIn()
+                true
+            }
+
             R.id.posts_Activity -> {
-startActivity(Intent(this, PostActivity::class.java))
+                startActivity(Intent(this, PostActivity::class.java))
                 return true
             }
+
 
             else -> super.onOptionsItemSelected(item)
         }
@@ -154,11 +208,11 @@ startActivity(Intent(this, PostActivity::class.java))
                         .child(key!!)
                         .child(uri.lastPathSegment!!)
                     putImageInStorage(storageReference, uri, key)
-            })
+                })
     }
 
 
-    private fun textMessage(text : String) {
+    private fun textMessage(text: String) {
         val bodyMessage = MessageBody(
             text,
             getUserName(),
@@ -215,9 +269,10 @@ startActivity(Intent(this, PostActivity::class.java))
 
     private fun signOut() {
         AuthUI.getInstance().signOut(this)
-        startActivity(Intent(this, SignInActivity::class.java))
-        finish()
+
+
     }
+
 
     companion object {
         private const val TAG = "MainAct2"
@@ -225,5 +280,6 @@ startActivity(Intent(this, PostActivity::class.java))
         const val ANONYMOUS = "anonymous"
         const val LOADING_IMAGE_URL = "https://www.google.com/images/spin-32.gif"
     }
+
 
 }

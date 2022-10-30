@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import com.example.chatwme.R
 import com.example.chatwme.databinding.PostBinding
 import com.example.chatwme.model.MessageBody
+import com.example.chatwme.model.Record
 import com.google.firebase.firestore.Query
 
 
@@ -34,6 +35,6 @@ class PostAdapter(
 
 
     interface PostsAdapterListener {
-        fun onPostSelected(status: MessageBody?)
+        fun onPostSelected(status: Record?)
     }
 }

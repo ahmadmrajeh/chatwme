@@ -15,4 +15,6 @@
     <string name="create_post">create Post ..</string>
     <string name="chat">Chat</string>
     <string name="post">Post</string>
+    <string name="login">Login</string>
+    <string name="post_activity">Post Activity</string>
 </resources>
