@@ -1,16 +1,19 @@
 package com.example.chatwme.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatwme.R
-import com.example.chatwme.databinding.ActivityPostBinding
+import com.example.chatwme.databinding.FragmentPostBinding
 import com.example.chatwme.model.Record
 import com.example.chatwme.ui.adapter.PostAdapter
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialFadeThrough
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
@@ -21,22 +24,24 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 
-
-class PostActivity : AppCompatActivity(), PostAdapter.PostsAdapterListener {
-
+class PostFragment : Fragment() , PostAdapter.PostsAdapterListener {
+private lateinit var binding :FragmentPostBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var adapter: PostAdapter
-    private lateinit var binding: ActivityPostBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityPostBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding=   FragmentPostBinding.inflate(inflater)
+
         auth = Firebase.auth
-
+        enterTransition = MaterialFadeThrough()
+        exitTransition = MaterialContainerTransform()
         setUpScreen()
-
+   
+        return binding.root
     }
-
     private fun setUpScreen() {
         val db = FirebaseFirestore.getInstance().collection("records")
         setUpRV(db)
@@ -45,6 +50,13 @@ class PostActivity : AppCompatActivity(), PostAdapter.PostsAdapterListener {
         clickListeners(db)
 
 
+    }
+    private fun setUpRV(db: Query) {
+        val query: Query = db
+        adapter = PostAdapter(query.orderBy("time"), this)
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
+        binding.recyclerView.adapter = adapter
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
     private fun clickListeners(db: CollectionReference) {
@@ -66,15 +78,27 @@ class PostActivity : AppCompatActivity(), PostAdapter.PostsAdapterListener {
 
         }
 
-        binding.button3.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
+      
         binding.button4.setOnClickListener {
             throw RuntimeException("Test Crash")
         }
 
     }
+    override fun onPostSelected(status: Record?) {
 
+    }
+    private fun addToFireStore(db: CollectionReference, data: Record) {
+
+        db.add(data)
+            .addOnSuccessListener { documentReference ->
+                Log.e("TAGfire", "DocumentSnapshot written with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.e("TAGfire", "Error adding document" + e.message)
+            }
+
+    }
+    
     private fun remoteConfigDefined() {
         val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
@@ -84,13 +108,12 @@ class PostActivity : AppCompatActivity(), PostAdapter.PostsAdapterListener {
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
 
         remoteConfig.fetchAndActivate()
-            .addOnCompleteListener(this) { task ->
+            .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
                     configPosting(remoteConfig.getBoolean("country"))
                 }
             }
     }
-
     private fun configPosting(notAllowed: Boolean) {
         if (notAllowed) {
 
@@ -104,31 +127,6 @@ class PostActivity : AppCompatActivity(), PostAdapter.PostsAdapterListener {
         }
     }
 
-    private fun setUpRV(db: Query) {
-        val query: Query = db
-        adapter = PostAdapter(query.orderBy("time"), this)
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = adapter
-        adapter.stateRestorationPolicy = RecyclerView.Adapter
-            .StateRestorationPolicy.PREVENT_WHEN_EMPTY
-    }
-
-    private fun addToFireStore(db: CollectionReference, data: Record) {
-
-        db.add(data)
-            .addOnSuccessListener { documentReference ->
-                Log.e("TAGfire", "DocumentSnapshot written with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.e("TAGfire", "Error adding document" + e.message)
-            }
-
-    }
-
-    override fun onPostSelected(status: Record?) {
-
-    }
-
     override fun onStart() {
         super.onStart()
         adapter.startListening()
@@ -138,7 +136,8 @@ class PostActivity : AppCompatActivity(), PostAdapter.PostsAdapterListener {
         super.onStop()
         adapter.startListening()
     }
-
+    
+    
     private fun getPhotoUrl(): String? {
         val user = auth.currentUser
         return user?.photoUrl?.toString()
@@ -150,5 +149,4 @@ class PostActivity : AppCompatActivity(), PostAdapter.PostsAdapterListener {
             user.displayName
         } else MainActivity.ANONYMOUS
     }
-
 }

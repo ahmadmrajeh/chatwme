@@ -36,6 +36,7 @@
         android:layout_height="36dp"
         android:layout_marginBottom="15dp"
         android:src="@drawable/ic_account_circle_black_36dp"
+        app:civ_circle_background_color="@color/colorTitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/messageImageView"
         app:layout_constraintStart_toStartOf="parent" />

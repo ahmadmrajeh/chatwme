@@ -11,10 +11,7 @@
         android:title="@string/login"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/posts_Activity"
-        android:title="@string/post_activity"
-        app:showAsAction="never"/>
+
 
 
 </menu>

@@ -17,4 +17,9 @@
     <string name="post">Post</string>
     <string name="login">Login</string>
     <string name="post_activity">Post Activity</string>
+    <string name="group">Group</string>
+    <string name="posts">Posts</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
