@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatwme.databinding.FragmentChatBinding
 import com.example.chatwme.model.MessageBody
-import com.example.chatwme.ui.adapter.MessageAdapter
+import com.example.chatwme.ui.adapter.chatAdapter.MessageAdapter
 import com.example.chatwme.utils.ButtonObserver
 import com.example.chatwme.utils.OpenDocumentContract
 import com.example.chatwme.utils.ScrollToBottomObserver
@@ -32,24 +32,24 @@ import com.google.firebase.storage.ktx.storage
 
 class ChatFragment : Fragment() {
     private lateinit var mBundleRecyclerViewState: Bundle
-    lateinit var binding:FragmentChatBinding
+    lateinit var binding: FragmentChatBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var manager: LinearLayoutManager
     private lateinit var db: FirebaseDatabase
     private lateinit var recyclerViewState: Parcelable
     private lateinit var adapter: MessageAdapter
     private val openDocument = registerForActivityResult(OpenDocumentContract()) { uri ->
-            uri?.let {
-                onImageSelected(it)
-            }
+        uri?.let {
+            onImageSelected(it)
         }
+    }
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding=FragmentChatBinding.inflate(inflater)
+        binding = FragmentChatBinding.inflate(inflater)
 
         auth = Firebase.auth
         setUpScreen()
@@ -57,7 +57,6 @@ class ChatFragment : Fragment() {
         enterTransition = MaterialFadeThrough()
         return binding.root
     }
-
 
 
     private fun setUpScreen() {
@@ -87,20 +86,17 @@ class ChatFragment : Fragment() {
         }
 
 
-
-
-
     }
 
     private fun setUpAdapters(options: FirebaseRecyclerOptions<MessageBody>) {
         adapter = MessageAdapter(options, getUserName())
         adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.ALLOW
-         binding.progressBar.visibility = ProgressBar.INVISIBLE
+        binding.progressBar.visibility = ProgressBar.INVISIBLE
 
 
         manager = LinearLayoutManager(requireActivity()) //CustomLinearLayoutManager(this)
         manager.stackFromEnd = true
-         binding.messageRecyclerView.layoutManager = manager
+        binding.messageRecyclerView.layoutManager = manager
         binding.messageRecyclerView.adapter = adapter
 
 
@@ -156,7 +152,6 @@ class ChatFragment : Fragment() {
     }
 
 
-
     private fun textMessage(text: String) {
         val bodyMessage = MessageBody(
             text,
@@ -202,30 +197,29 @@ class ChatFragment : Fragment() {
     }
 
 
-      override fun onPause() {
-          super.onPause()
+    override fun onPause() {
+        super.onPause()
 
-          mBundleRecyclerViewState = Bundle()
-          val listState: Parcelable? = binding.messageRecyclerView.layoutManager?.onSaveInstanceState()
-          mBundleRecyclerViewState.putParcelable("KEY_RECYCLER_STATE", listState)
+        mBundleRecyclerViewState = Bundle()
+        val listState: Parcelable? =
+            binding.messageRecyclerView.layoutManager?.onSaveInstanceState()
+        mBundleRecyclerViewState.putParcelable("KEY_RECYCLER_STATE", listState)
 
 
-    adapter.stopListening()
+        adapter.stopListening()
 
     }
 
 
-      override fun onResume() {
+    override fun onResume() {
         super.onResume()
-    if (this::mBundleRecyclerViewState.isInitialized ) {
-              val listState = mBundleRecyclerViewState.getParcelable<Parcelable>("KEY_RECYCLER_STATE")
-              binding.messageRecyclerView.layoutManager?.onRestoreInstanceState(listState)
-          }
-
+        if (this::mBundleRecyclerViewState.isInitialized) {
+            val listState = mBundleRecyclerViewState.getParcelable<Parcelable>("KEY_RECYCLER_STATE")
+            binding.messageRecyclerView.layoutManager?.onRestoreInstanceState(listState)
+        }
 
 
     }
-
 
 
     companion object {

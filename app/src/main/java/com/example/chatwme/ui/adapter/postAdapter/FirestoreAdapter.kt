@@ -1,4 +1,4 @@
-package com.example.chatwme.ui.adapter
+package com.example.chatwme.ui.adapter.postAdapter
 
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
@@ -7,7 +7,7 @@ import com.google.firebase.firestore.EventListener
 import java.util.*
 
 abstract class FirestoreAdapter<VH : RecyclerView.ViewHolder>(
-     private val query: Query
+    private val query: Query
 ) : RecyclerView.Adapter<VH>(), EventListener<QuerySnapshot> {
 
     private var registration: ListenerRegistration? = null
@@ -20,7 +20,7 @@ abstract class FirestoreAdapter<VH : RecyclerView.ViewHolder>(
         }
     }
 
-    open fun stopListening () {
+    open fun stopListening() {
         if (registration != null) {
             registration!!.remove()
             registration = null

@@ -3,7 +3,7 @@ package com.example.chatwme.utils
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
-import com.example.chatwme.ui.adapter.MessageAdapter
+import com.example.chatwme.ui.adapter.chatAdapter.MessageAdapter
 
 class ScrollToBottomObserver(
     private val recycler: RecyclerView,

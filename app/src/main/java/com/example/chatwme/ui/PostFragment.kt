@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatwme.R
 import com.example.chatwme.databinding.FragmentPostBinding
 import com.example.chatwme.model.Record
-import com.example.chatwme.ui.adapter.PostAdapter
+import com.example.chatwme.ui.adapter.postAdapter.PostAdapter
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.firebase.auth.FirebaseAuth
@@ -24,8 +24,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 
-class PostFragment : Fragment() , PostAdapter.PostsAdapterListener {
-private lateinit var binding :FragmentPostBinding
+class PostFragment : Fragment(), PostAdapter.PostsAdapterListener {
+    private lateinit var binding: FragmentPostBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var adapter: PostAdapter
 
@@ -33,15 +33,16 @@ private lateinit var binding :FragmentPostBinding
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding=   FragmentPostBinding.inflate(inflater)
+        binding = FragmentPostBinding.inflate(inflater)
 
         auth = Firebase.auth
         enterTransition = MaterialFadeThrough()
         exitTransition = MaterialContainerTransform()
         setUpScreen()
-   
+
         return binding.root
     }
+
     private fun setUpScreen() {
         val db = FirebaseFirestore.getInstance().collection("records")
         setUpRV(db)
@@ -51,12 +52,14 @@ private lateinit var binding :FragmentPostBinding
 
 
     }
+
     private fun setUpRV(db: Query) {
         val query: Query = db
         adapter = PostAdapter(query.orderBy("time"), this)
         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
         binding.recyclerView.adapter = adapter
-        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        adapter.stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
     private fun clickListeners(db: CollectionReference) {
@@ -78,15 +81,17 @@ private lateinit var binding :FragmentPostBinding
 
         }
 
-      
+
         binding.button4.setOnClickListener {
             throw RuntimeException("Test Crash")
         }
 
     }
+
     override fun onPostSelected(status: Record?) {
 
     }
+
     private fun addToFireStore(db: CollectionReference, data: Record) {
 
         db.add(data)
@@ -98,7 +103,7 @@ private lateinit var binding :FragmentPostBinding
             }
 
     }
-    
+
     private fun remoteConfigDefined() {
         val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
@@ -114,6 +119,7 @@ private lateinit var binding :FragmentPostBinding
                 }
             }
     }
+
     private fun configPosting(notAllowed: Boolean) {
         if (notAllowed) {
 
@@ -136,8 +142,8 @@ private lateinit var binding :FragmentPostBinding
         super.onStop()
         adapter.startListening()
     }
-    
-    
+
+
     private fun getPhotoUrl(): String? {
         val user = auth.currentUser
         return user?.photoUrl?.toString()

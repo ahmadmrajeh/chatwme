@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        navController= Navigation.findNavController(this,R.id.fragmentContainerView)
-        setupWithNavController(binding.bottomNavigation,navController)
+        navController = Navigation.findNavController(this, R.id.fragmentContainerView)
+        setupWithNavController(binding.bottomNavigation, navController)
 
         auth = Firebase.auth
         if (auth.currentUser == null) {
@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity() {
             // finish()
             // return
         }
-
 
 
     }
@@ -72,9 +71,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
-
     private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
         if (result.resultCode == RESULT_OK) {
             Log.d(TAG, "Sign in successful!")
@@ -90,10 +86,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
-
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -117,12 +109,6 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-
-
-
-
-
 
 
     private fun signOut() {
